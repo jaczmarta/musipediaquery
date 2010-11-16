@@ -1,0 +1,11 @@
+// musipedia envelope bodyOut: (request)
+search{username="deathfireburn"; q123hash="karlstein"; q1collection="Musipedia"; q2query="*RUURDDDDRUURDR"; }
+//request dump:
+<v:Envelope xmlns:i="http://www.w3.org/1999/XMLSchema-instance" xmlns:d="http://www.w3.org/1999/XMLSchema" xmlns:c="http://schemas.xmlsoap.org/soap/encoding/" xmlns:v="http://schemas.xmlsoap.org/soap/envelope/"><v:Header /><v:Body><n0:search id="o0" c:root="1" xmlns:n0="http://www.musipedia.org/"><username i:type="d:string">"deathfireburn"</username><q123hash i:type="d:string">"karlstein"</q123hash><q1collection i:type="d:string">"Musipedia"</q1collection><q2query i:type="d:string">"*RUURDDDDRUURDR"</q2query></n0:search></v:Body></v:Envelope>
+
+// topscorers envelope bodyOut: (request)
+TopGoalScorers{iTopN=5; }
+//request dump:
+<v:Envelope xmlns:i="http://www.w3.org/1999/XMLSchema-instance" xmlns:d="http://www.w3.org/1999/XMLSchema" xmlns:c="http://schemas.xmlsoap.org/soap/encoding/" xmlns:v="http://schemas.xmlsoap.org/soap/envelope/"><v:Header /><v:Body><n0:TopGoalScorers id="o0" c:root="1" xmlns:n0="http://footballpool.dataaccess.eu"><iTopN i:type="d:string">5</iTopN></n0:TopGoalScorers></v:Body></v:Envelope>
+//bodyIn: (response)
+TopGoalScorersResponse{TopGoalScorersResult=anyType{tTopGoalScorer=anyType{sName=David Villa; iGoals=5; sCountry=Y; sFlag=http://footballpool.dataaccess.eu/images/flags/es.gif; }; tTopGoalScorer=anyType{sName=Diego Forlán; iGoals=5; sCountry=Y; sFlag=http://footballpool.dataaccess.eu/images/flags/uy.gif; }; tTopGoalScorer=anyType{sName=Thomas Müller; iGoals=5; sCountry=Y; sFlag=http://footballpool.dataaccess.eu/images/flags/de.gif; }; tTopGoalScorer=anyType{sName=Wesley Sneijder; iGoals=5; sCountry=Y; sFlag=http://footballpool.dataaccess.eu/images/flags/nl.gif; }; tTopGoalScorer=anyType{sName=Gonzalo Higuaín; iGoals=4; sCountry=Y; sFlag=http://footballpool.dataaccess.eu/images/flags/ar.gif; }; }; }

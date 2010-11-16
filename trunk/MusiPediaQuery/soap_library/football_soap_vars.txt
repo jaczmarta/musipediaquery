@@ -1,0 +1,75 @@
+private static final String METHOD_NAME = "TopGoalScorers";
+//     <operation name="TopGoalScorers">
+      <documentation>...</documentation>
+      <input message="tns:TopGoalScorersSoapRequest"/>
+      <output message="tns:TopGoalScorersSoapResponse"/>
+    </operation>
+	
+private static final String SOAP_ACTION = "http://footballpool.dataaccess.eu/data/TopGoalScorers";
+// ???
+
+private static final String NAMESPACE = "http://footballpool.dataaccess.eu";
+// XML BODY header: <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://footballpool.dataaccess.eu" name="Info" targetNamespace="http://footballpool.dataaccess.eu">
+
+private static final String URL = "http://footballpool.dataaccess.eu/data/info.wso?WSDL";
+//  <port name="InfoSoap" binding="tns:InfoSoapBinding">
+      <soap:address location="http://footballpool.dataaccess.eu/data/info.wso"/>
+    </port>
+	
+<!-- Musipedia WSDL -->	
+	Name: search
+Binding: MusipediaBinding
+Endpoint: http://www.musipedia.org/soap/index.php
+SoapAction: http://www.musipedia.org/#search
+Style: rpc
+Input:
+  use: encoded
+  namespace: http://www.musipedia.org/
+  encodingStyle: http://schemas.xmlsoap.org/soap/encoding/
+  message: searchRequest
+  parts:
+    username: xsd:string
+    q123hash: xsd:string
+    q1collection: xsd:string
+    q2query: xsd:string
+    q3keywords: xsd:string
+    q4pitch: xsd:float
+    q5rhythm: xsd:float
+    q6items: xsd:int
+    q7offset: xsd:int
+    q8categories: xsd:string
+Output:
+  use: encoded
+  namespace: http://www.musipedia.org/
+  encodingStyle: http://schemas.xmlsoap.org/soap/encoding/
+  message: searchResponse
+  parts:
+    return: tns:SearchResStruct
+Namespace: http://www.musipedia.org/
+Transport: http://schemas.xmlsoap.org/soap/http
+Documentation: Performs a Musipedia/Melodyhound search.
+Parameters:
+username: Your Musipedia user name.
+q123hash: Should equal md5(your_musipedia_password.q1collection.q2query.q3keywords). If you don't have an md5 function at hand and don't care about sending your password in clear text, you can also set q123hash to your Musipedia login password.
+q1collection: can be "Musipedia" or "Web", with "Musipedia" as default if it is blank or set to some invalid value.
+q2query: a short melody or rhythmic pattern. Its format determines the search algorithm. Possibilities are:
+- rhythm: a sequence of onset times, e. g. "3.2,3.4,3.6,4,5,6"
+- melody: a sequence of triplets of onset time, MIDI pitch, duration, e. g. "3.2,82,0.3;3.8,82,0.2;4,64,1"
+- contour: a Parsons code string, e. g. "UDUR"
+q3keywords: optional: some words that have to be contained in the composer or title field of any returned result
+q4pitch: optional: for melody searches, the importance of the pitch component. Default 0.6. Ignored for non-melody searches.
+q5rhythm: optional: for melody searches, the importance of the rhythm component. Default 0.4. Ignored for non-melody searches.
+q6items: optional: the maximum number of items to return. Default: 10. Values higher than 100 are set to 100.
+q7offset: optional: how many items to skip from the beginning (useful for browsing without downloading too much information at once). Default: 0.
+Output fields are:
+q8categories: optional: one or more letters for categories (C/F/P/...)
+message: 'OK' or an error message
+items: an array of the items found. Every item contains these fields:
+- url: a URL pointing to the Musipedia record
+- distance: the distance of this record to the query
+- composer
+- title
+- category
+- offset: the number of seconds from the beginning where the matching part begins
+- duration: the duration (in secods) of the part that matches the query
+requests: the number of requests you have used so far.
