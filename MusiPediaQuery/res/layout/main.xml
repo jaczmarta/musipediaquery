@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="vertical">
+		<TextView android:text="@+id/TextView01" android:id="@+id/TextView01"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+		<EditText android:text="@+id/EditText01" android:id="@+id/EditText01"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:editable="false"></EditText>
+		<TableLayout android:id="@+id/TableLayout01"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			xmlns:android="http://schemas.android.com/apk/res/android"
+			android:stretchColumns="1">
+
+			<View android:layout_height="2dip" android:background="#FF909090" />
+			<TableRow>
+				<TextView android:text="@+id/TextView02" android:id="@+id/TextView02"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:textSize="18px"></TextView>
+
+				<Button android:text="@+id/Button01" android:id="@+id/Button01"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:gravity="center_horizontal|center">
+				</Button>
+			</TableRow>
+			<TableRow>
+				<TextView android:text="@+id/TextView03" android:id="@+id/TextView03"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:textSize="18px"></TextView>
+
+				<Button android:text="@+id/Button02" android:id="@+id/Button02"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+			</TableRow>
+
+			<TableRow>
+				<TextView android:text="@+id/TextView04" android:id="@+id/TextView04"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:textSize="18px"></TextView>
+
+
+				<Button android:text="@+id/Button03" android:id="@+id/Button03"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+			</TableRow>
+			<View android:layout_height="2dip" android:background="#FF909090" />
+			<TableRow android:layout_weight="1">
+				<Button android:text="@+id/Button04" android:id="@+id/Button04"
+					android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"></Button>
+				<Button android:text="@+id/Button05" android:id="@+id/Button05"
+					android:layout_weight="1" android:layout_width="0dip" android:layout_height="wrap_content"></Button>
+
+			</TableRow>
+
+		</TableLayout>
+		
+				<ExpandableListView android:id="@+id/android:list"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:textSize="18px" />
+
+	</LinearLayout>
+
+</ScrollView>

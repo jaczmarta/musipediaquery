@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<definitions xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.musipedia.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.musipedia.org/">
+<types><xsd:schema targetNamespace="http://www.musipedia.org/"
+>
+ <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+ <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/" />
+ <xsd:complexType name="Item">
+  <xsd:all>
+   <xsd:element name="url" type="xsd:string"/>
+   <xsd:element name="id" type="xsd:string"/>
+   <xsd:element name="distance" type="xsd:string"/>
+   <xsd:element name="composer" type="xsd:string"/>
+   <xsd:element name="title" type="xsd:string"/>
+   <xsd:element name="category" type="xsd:string"/>
+   <xsd:element name="offset" type="xsd:float"/>
+   <xsd:element name="duration" type="xsd:float"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="ArrayOfItem">
+  <xsd:complexContent>
+   <xsd:restriction base="SOAP-ENC:Array">
+    <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:Item[]"/>
+   </xsd:restriction>
+  </xsd:complexContent>
+ </xsd:complexType>
+ <xsd:complexType name="SearchResStruct">
+  <xsd:all>
+   <xsd:element name="message" type="xsd:string"/>
+   <xsd:element name="items" type="tns:ArrayOfItem"/>
+   <xsd:element name="requests" type="xsd:int"/>
+  </xsd:all>
+ </xsd:complexType>
+</xsd:schema>
+</types>
+<message name="searchRequest"><part name="username" type="xsd:string" /><part name="q123hash" type="xsd:string" /><part name="q1collection" type="xsd:string" /><part name="q2query" type="xsd:string" /><part name="q3keywords" type="xsd:string" /><part name="q4pitch" type="xsd:float" /><part name="q5rhythm" type="xsd:float" /><part name="q6items" type="xsd:int" /><part name="q7offset" type="xsd:int" /><part name="q8categories" type="xsd:string" /></message>
+<message name="searchResponse"><part name="return" type="tns:SearchResStruct" /></message>
+<message name="indexRequest"><part name="username" type="xsd:string" /><part name="tidactionhash" type="xsd:string" /><part name="tid" type="xsd:int" /><part name="action" type="xsd:string" /></message>
+<message name="indexResponse"><part name="message" type="xsd:string" /></message>
+<portType name="MusipediaPortType"><operation name="search"><documentation>Performs a Musipedia/Melodyhound search.&lt;br&gt;
+Parameters:&lt;br&gt;
+username: Your Musipedia user name.&lt;br&gt;
+q123hash: Should equal md5(your_musipedia_password.q1collection.q2query.q3keywords). If you don't have an md5 function at hand and don't care about sending your password in clear text, you can also set q123hash to your Musipedia login password.&lt;br&gt;
+q1collection: can be &quot;Musipedia&quot; or &quot;Web&quot;, with &quot;Musipedia&quot; as default if it is blank or set to some invalid value.&lt;br&gt;
+q2query: a short melody or rhythmic pattern. Its format determines the search algorithm. Possibilities are:&lt;br&gt;
+ - rhythm: a sequence of onset times, e. g. &quot;3.2,3.4,3.6,4,5,6&quot;&lt;br&gt;
+ - melody: a sequence of triplets of onset time, MIDI pitch, duration, e. g. &quot;3.2,82,0.3;3.8,82,0.2;4,64,1&quot;&lt;br&gt;
+ - contour: a Parsons code string, e. g. &quot;UDUR&quot;&lt;br&gt;
+q3keywords: optional: some words that have to be contained in the composer or title field of any returned result&lt;br&gt;
+q4pitch: optional: for melody searches, the importance of the pitch component. Default 0.6. Ignored for non-melody searches.&lt;br&gt;
+q5rhythm: optional: for melody searches, the importance of the rhythm component. Default 0.4. Ignored for non-melody searches.&lt;br&gt;
+q6items: optional: the maximum number of items to return. Default: 10. Values higher than 100 are set to 100.&lt;br&gt;
+q7offset: optional: how many items to skip from the beginning (useful for browsing without downloading too much information at once). Default: 0.&lt;br&gt;
+Output fields are:&lt;br&gt;
+q8categories: optional: one or more letters for categories (C/F/P/...)&lt;br&gt;
+message: 'OK' or an error message&lt;br&gt;
+items: an array of the items found. Every item contains these fields:&lt;br&gt;
+ - url: a URL pointing to the Musipedia record&lt;br&gt;
+ - distance: the distance of this record to the query&lt;br&gt;
+ - composer&lt;br&gt;
+ - title&lt;br&gt;
+ - category&lt;br&gt;
+ - offset: the number of seconds from the beginning where the matching part begins&lt;br&gt;
+ - duration: the duration (in secods) of the part that matches the query&lt;br&gt;
+requests: the number of requests you have used so far.</documentation><input message="tns:searchRequest"/><output message="tns:searchResponse"/></operation><operation name="index"><documentation>Adds the item to the index, or updates the index for the item if it already is indexed.&lt;br&gt;
+Parameters:&lt;br&gt;
+username: Your Musipedia user name.&lt;br&gt;
+tidhash: Should equal md5(your_musipedia_password.tid). If you don't have an md5 function at hand and don't care about sending your password in clear text, you can also set tidhash to your Musipedia login password.&lt;br&gt;
+tid: the ID of the melody in question.&lt;br&gt;
+Output fields are:&lt;br&gt;
+message: 'OK' or an error message&lt;br&gt;</documentation><input message="tns:indexRequest"/><output message="tns:indexResponse"/></operation></portType>
+<binding name="MusipediaBinding" type="tns:MusipediaPortType"><soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/><operation name="search"><soap:operation soapAction="http://www.musipedia.org/#search" style="rpc"/><input><soap:body use="encoded" namespace="http://www.musipedia.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="http://www.musipedia.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation><operation name="index"><soap:operation soapAction="http://www.musipedia.org/#index" style="rpc"/><input><soap:body use="encoded" namespace="http://www.musipedia.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></input><output><soap:body use="encoded" namespace="http://www.musipedia.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></output></operation></binding>
+<service name="Musipedia"><port name="MusipediaPort" binding="tns:MusipediaBinding"><soap:address location="http://www.musipedia.org/soap/index.php"/></port></service>
+</definitions>

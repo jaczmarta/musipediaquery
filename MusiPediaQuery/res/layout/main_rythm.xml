@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<TextView android:text="@+id/TextView01" android:id="@+id/TextView01"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+		<EditText android:text="@+id/EditText01" android:id="@+id/EditText01"
+			android:layout_height="wrap_content" android:layout_width="fill_parent"
+			android:editable="false"></EditText>
+		<Button android:text="@+id/Button01" android:id="@+id/Button01"
+			android:layout_width="fill_parent" android:layout_height="90dip"
+			android:onClick="myClickHandler"></Button>
+		<ToggleButton android:text="@+id/ToggleButton01"
+			android:id="@+id/ToggleButton01" android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:onClick="myClickHandler"></ToggleButton>
+		<TableLayout android:id="@+id/TableLayout01"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			xmlns:android="http://schemas.android.com/apk/res/android"
+			android:stretchColumns="1">
+
+			<View android:layout_height="2dip" android:background="#FF909090" />
+			<TableRow android:layout_weight="1">
+				<Button android:text="@+id/Button02" android:id="@+id/Button02"
+					android:layout_height="wrap_content" android:onClick="myClickHandler"
+					android:layout_weight="1" android:layout_width="0dip"></Button>
+
+				<Button android:text="@+id/Button03" android:id="@+id/Button03"
+					android:layout_weight="1" android:layout_width="0dip"
+					android:layout_height="wrap_content" android:onClick="myClickHandler"></Button>
+			</TableRow>
+		</TableLayout>
+	</LinearLayout>
+</ScrollView>

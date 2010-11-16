@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="passwordPrefString">password</string>
+    <string name="usernamePrefString">username</string>
+    <string name="preferencesName">preferences</string>
+    <string name="Description">Query Application for Musipedia Web Service. Using Parson\'s Code and MIDI Rhythm</string>
+    <string name="app_name">MusiPediaQuery</string>
+<string name="AboutInfoString">This App was created by Julian Dabbert with cooperation from Rainer Typke. (c)2010</string>
+</resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- <PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+<EditTextPreference android:dialogLayout="@xml/preferences" android:key="@string/usernamePrefString" android:dialogTitle="@string/preferencesName"></EditTextPreference>
+<EditTextPreference android:key="@string/passwordPrefString" android:password="true"></EditTextPreference>
+</PreferenceScreen>
+-->
+
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="Authentification">
+	<EditTextPreference
+			android:key="usernamePrefString"
+			android:title="Username"
+			android:summary="Edit MusiPedia login for queries"
+			android:dialogTitle="Enter MusiPedia Username"
+		/>
+			<EditTextPreference
+			android:key="passwordPrefString"
+			android:title="Password"
+			android:summary="Edit password for MusiPedia login"
+			android:dialogTitle="Enter MusiPedia password"
+			android:password="true"
+		/>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Search categories">
+		<PreferenceScreen
+			android:key="detailCategories"
+			android:title="Search categories"
+			android:summary="Choose the categories for searches">
+			<CheckBoxPreference
+				android:key="checkboxClassic"
+				android:title="Classical"
+				android:summary="Search results in category Classical"
+				android:checked="true"
+			/>
+						<CheckBoxPreference
+				android:key="checkboxPopular"
+				android:title="Popular"
+				android:summary="Search results in category Popular"
+				android:checked="true"
+			/>
+						<CheckBoxPreference
+				android:key="checkboxFolkSongs"
+				android:title="Folk Songs"
+				android:summary="Search results in category Folk Songs"
+				android:checked="true"
+			/>
+						<CheckBoxPreference
+				android:key="checkboxHymnsCarols"
+				android:title="Hymns and Carols"
+				android:summary="Search results in category Hymns and Carols"
+				android:checked="true"
+			/>
+						<CheckBoxPreference
+				android:key="checkboxAnthems"
+				android:title="National Anthems"
+				android:summary="Search results in category National Anthems"
+				android:checked="true"
+			/>
+		</PreferenceScreen>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="Result size">
+		<EditTextPreference
+			android:key="resultSize"
+			android:title="Number of Results"
+			android:summary="Enter maximal size of result list"
+			android:dialogTitle="Enter number of results"
+			android:inputType="number"
+		/>
+	</PreferenceCategory>
+</PreferenceScreen>
