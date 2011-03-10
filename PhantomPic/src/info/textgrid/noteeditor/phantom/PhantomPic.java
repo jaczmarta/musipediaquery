@@ -3,6 +3,7 @@ package info.textgrid.noteeditor.phantom;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.gesture.Gesture;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
@@ -14,15 +15,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class PhantomPic extends Activity implements OnGesturePerformedListener {
+	
+	protected static final int SAVE_ID = Menu.FIRST + 2; //Menu: edit preferences
+	protected static final int INFO_ID = Menu.FIRST + 4; //Menu: close program
 
 	private GestureLibrary mLibrary;
 
@@ -34,7 +37,7 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 		setContentView(R.layout.main);
 		paintBitmapImage("Fire Spell");
 
-		mLibrary = GestureLibraries.fromRawResource(this, R.raw.spells);
+		mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
 		if (!mLibrary.load()) {
 			finish();
 		}
@@ -42,15 +45,19 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 		gestures.setGestureColor(0xFF5500EE);
 		gestures.addOnGesturePerformedListener(this);
 		
-		Spinner categorySpinner = (Spinner) findViewById(R.id.Spinner01);
-	    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-	            this, R.array.category_array, android.R.layout.simple_spinner_item);
-	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    categorySpinner.setAdapter(adapter);
-	    categorySpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+		EditText editText = (EditText)findViewById(R.id.EditText01);
+		editText.setText("Bob");
+		
+//		Spinner categorySpinner = (Spinner) findViewById(R.id.Spinner01);
+//	    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+//	            this, R.array.category_array, android.R.layout.simple_spinner_item);
+//	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//	    categorySpinner.setAdapter(adapter);
+//	    categorySpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
 	}
 
 	private void paintBitmapImage(String type) {
+		//TODO: use the given maximal screenwidth dynamically, height in 3:4
 		icon = Bitmap.createBitmap(300, 400, Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(icon);
 		Paint photoPaint = new Paint();
@@ -99,16 +106,46 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 		}
 	}
 	
-	public class MyOnItemSelectedListener implements OnItemSelectedListener {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case SAVE_ID://TODO
+			Toast.makeText(this, "TODO: saving to file", Toast.LENGTH_LONG)
+			.show();
+			return (true);
 
-	    public void onItemSelected(AdapterView<?> parent,
-	        View view, int pos, long id) {
-	      Toast.makeText(parent.getContext(), "The category is " +
-	          parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
-	    }
+		case INFO_ID:
+			try {
+				AlertDialogBuilder.createAboutDialog(this).show();
+			} catch (NameNotFoundException e) {
+				Log.v("AlertDialog", e.toString());
+			}
+			return (true);
+		}
 
-	    public void onNothingSelected(AdapterView<?> parent) {
-	      // Do nothing.
-	    }
+		return (super.onOptionsItemSelected(item));
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(Menu.NONE, SAVE_ID, Menu.NONE,
+				"Preferences").setIcon(R.drawable.preferences48)
+				.setAlphabeticShortcut('e');
+		menu.add(Menu.NONE, INFO_ID, Menu.NONE, "About")
+				.setIcon(R.drawable.dialog48).setAlphabeticShortcut('c');
+		return (super.onCreateOptionsMenu(menu));
+	}
+	
+//	public class MyOnItemSelectedListener implements OnItemSelectedListener {
+//
+//	    public void onItemSelected(AdapterView<?> parent,
+//	        View view, int pos, long id) {
+//	      Toast.makeText(parent.getContext(), "The category is " +
+//	          parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+//	    }
+//
+//	    public void onNothingSelected(AdapterView<?> parent) {
+//	      // Do nothing.
+//	    }
+//	}
 }
