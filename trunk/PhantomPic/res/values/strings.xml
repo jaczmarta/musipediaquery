@@ -13,4 +13,5 @@
         <item>Mouth</item>
         <item>Chin</item>
     </string-array>    
+<string name="about">This PhantomPic App was built by Julian Dabbert in 2011</string>
 </resources>
