@@ -2,4 +2,15 @@
 <resources>
     <string name="hello">Hello World, PhantomPic!</string>
     <string name="app_name">PhantomPic</string>
+        <string-array name="category_array">
+        <item>Hair</item>
+        <item>Eyebrows</item>
+        <item>Ears</item>
+        <item>Glasses</item>
+        <item>Eyes</item>
+        <item>Nose</item>
+        <item>Moustache</item>
+        <item>Mouth</item>
+        <item>Chin</item>
+    </string-array>    
 </resources>
