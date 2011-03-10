@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="5px"
     >
-<TextView  
-  android:text="@+id/TextView01" android:id="@+id/TextView01"
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="center_horizontal" android:layout_margin="10dip"/>
-    
     <ImageView android:id="@+id/test_image" android:src="@drawable/logo_eule_128x128"
-			android:layout_width="wrap_content" android:layout_height="wrap_content" />
-	<!-- <View android:layout_height="2dip" android:background="#FF909090" />  -->
+			android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="300px"/>
+			
+	<EditText android:text="@+id/EditText01" android:id="@+id/EditText01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_toRightOf="@id/test_image" android:clickable="true"></EditText>
+    
+	<Spinner android:id="@+id/Spinner01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/EditText01" android:layout_toRightOf="@id/test_image"/>
+	<SeekBar android:id="@+id/SeekBar01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/Spinner01" android:layout_toRightOf="@id/test_image" android:max="5"/>
+	<Button android:text="@+id/Button01" android:id="@+id/Button01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/SeekBar01" android:layout_toRightOf="@id/test_image"/>
+	
 	<android.gesture.GestureOverlayView
 		android:id="@+id/gestures"
 		android:layout_width="fill_parent" 
-    	android:layout_height="0dip"
-    	android:layout_weight="1.0" />
-</LinearLayout>
+    	android:layout_height="fill_parent"
+    	android:layout_weight="1.0" 
+    	android:layout_below="@id/test_image"/>
+</RelativeLayout>
