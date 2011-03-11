@@ -23,19 +23,41 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 public class PhantomPic extends Activity implements OnGesturePerformedListener {
-	
-	protected static final int SAVE_ID = Menu.FIRST + 2; //Menu: edit preferences
-	protected static final int INFO_ID = Menu.FIRST + 4; //Menu: close program
+
+	protected static final int SAVE_ID = Menu.FIRST + 2; // Menu: edit
+															// preferences
+	protected static final int INFO_ID = Menu.FIRST + 4; // Menu: close program
+
+	protected static final int ELEMENTS_PER_CATEGORY = 10; // how many elements
+															// within a category
+
+	private static final String GESTURE_UP = "Up";
+	private static final String GESTURE_DOWN = "Down";
+	private static final String GESTURE_LEFT = "Left";
+	private static final String GESTURE_RIGHT = "Right";
+	private static final String GESTURE_REDOALL = "RedoAll";
+	private static final String GESTURE_BOXALL = "BoxItAll";
+	private static final String GESTURE_XPOINT = "XMarksThePoint";
 
 	private GestureLibrary mLibrary;
 
 	private Bitmap icon;
 
+	private String[] categoryArray;
+
+	private int[] elementArray;
+
+	private int categoryPointer = 0;
+	
+	private EditText editText;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		paintBitmapImage("Fire Spell");
+
+		init();
+		paintBitmapImage();
 
 		mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
 		if (!mLibrary.load()) {
@@ -44,48 +66,80 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 		GestureOverlayView gestures = (GestureOverlayView) findViewById(R.id.gestures);
 		gestures.setGestureColor(0xFF5500EE);
 		gestures.addOnGesturePerformedListener(this);
-		
-		EditText editText = (EditText)findViewById(R.id.EditText01);
-		editText.setText("Bob");
-		
-//		Spinner categorySpinner = (Spinner) findViewById(R.id.Spinner01);
-//	    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-//	            this, R.array.category_array, android.R.layout.simple_spinner_item);
-//	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//	    categorySpinner.setAdapter(adapter);
-//	    categorySpinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+
 	}
 
-	private void paintBitmapImage(String type) {
-		//TODO: use the given maximal screenwidth dynamically, height in 3:4
+	private void init() {
+		this.editText = (EditText) findViewById(R.id.EditText01);
+		this.editText.setText("");
+		this.categoryArray = getResources().getStringArray(
+				R.array.category_array);
+		this.elementArray = new int[ELEMENTS_PER_CATEGORY];
+	}
+
+	private void paintBitmapImage() {
+		// TODO: use the given maximal screenwidth dynamically, height in 3:4
 		icon = Bitmap.createBitmap(300, 400, Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(icon);
 		Paint photoPaint = new Paint();
-		photoPaint.setColor(0xFF5500EE);
+		photoPaint.setColor(0xFFEE0022);
 		photoPaint.setDither(true);
 		photoPaint.setFilterBitmap(true);
-		photoPaint.setTextSize(24);
-
+		photoPaint.setTextSize(30);
 		Bitmap inlay;
-		if (type.startsWith("Fire")) {
+		if (this.elementArray[this.categoryPointer] > 0) {
 			inlay = BitmapFactory.decodeResource(getResources(),
-					R.drawable.logo_eule_128x128);
+					R.drawable.logo_eule_buch);
 		} else {
-			if (type.startsWith("Ice")) {
-				inlay = BitmapFactory.decodeResource(getResources(),
-						R.drawable.logo_eule_buch);
-			} else {
-				inlay = BitmapFactory.decodeResource(getResources(),
-						R.drawable.logo_eule_wink);
-			}
+			inlay = BitmapFactory.decodeResource(getResources(),
+					R.drawable.logo_eule_wink);
 		}
-		
+
 		canvas.drawARGB(250, 120, 120, 120);
-		canvas.drawText(type, 12f, 380f, photoPaint);
-		canvas.drawBitmap(inlay, 30f, 40f, photoPaint);		
+		if(this.editText.getText().length() > 0)
+			canvas.drawText("Name:" + this.editText.getText().toString(), 12f, 380f,
+				photoPaint);
+		canvas.drawBitmap(inlay, 30f, 40f, photoPaint);
 
 		ImageView image = (ImageView) findViewById(R.id.test_image);
 		image.setImageBitmap(icon);
+	}
+
+	private void handleGesture(String gestureString) {
+		if (gestureString.equals(GESTURE_UP)
+				|| gestureString.equals(GESTURE_DOWN)) {
+			// switch category
+			if (gestureString.equals(GESTURE_DOWN)) {
+				this.categoryPointer++;
+				if(this.categoryPointer > this.categoryArray.length - 1)
+					this.categoryPointer = 0;
+			} else {
+				this.categoryPointer--;
+				if(this.categoryPointer < 0)
+					this.categoryPointer = this.categoryArray.length - 1;
+			}
+		} else if (gestureString.equals(GESTURE_REDOALL)) {
+			// reset category
+			this.categoryPointer = 0;
+		} else if (gestureString.equals(GESTURE_RIGHT)
+				|| gestureString.equals(GESTURE_LEFT)) {
+			// increase element in this category
+			if (gestureString.equals(GESTURE_RIGHT)) {
+				this.elementArray[this.categoryPointer]++;
+				if(this.elementArray[this.categoryPointer] > this.elementArray.length)
+						this.elementArray[this.categoryPointer] = 0;
+			} else {
+				this.elementArray[this.categoryPointer]--;
+				if(this.elementArray[this.categoryPointer] < 0)
+					this.elementArray[this.categoryPointer] = this.elementArray.length;
+			}
+		} else if (gestureString.equals(GESTURE_XPOINT) || gestureString.equals(GESTURE_BOXALL)) {
+			// delete this element, reset to 0;
+			this.elementArray[this.categoryPointer] = 0;
+		}
+		paintBitmapImage();
+		Toast.makeText(this, "Gesture: " + gestureString + "\nCategory: " + this.categoryArray[this.categoryPointer] + "\nElement:" + this.elementArray[this.categoryPointer], Toast.LENGTH_SHORT)
+		.show();
 	}
 
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
@@ -96,22 +150,21 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 			// We want at least some confidence in the result
 			if (prediction.score > 1.0) {
 				// Show the spell
-				Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT)
-						.show();
-				paintBitmapImage(prediction.name);
+//				Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT)
+//						.show();
+				handleGesture(prediction.name);
 			} else {
-				Toast.makeText(this, "???", Toast.LENGTH_SHORT)
-				.show();
+				Toast.makeText(this, "???", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case SAVE_ID://TODO
+		case SAVE_ID:// TODO
 			Toast.makeText(this, "TODO: saving to file", Toast.LENGTH_LONG)
-			.show();
+					.show();
 			return (true);
 
 		case INFO_ID:
@@ -128,24 +181,10 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, SAVE_ID, Menu.NONE,
-				"Preferences").setIcon(R.drawable.preferences48)
-				.setAlphabeticShortcut('e');
-		menu.add(Menu.NONE, INFO_ID, Menu.NONE, "About")
-				.setIcon(R.drawable.dialog48).setAlphabeticShortcut('c');
+		menu.add(Menu.NONE, SAVE_ID, Menu.NONE, "Preferences").setIcon(
+				R.drawable.preferences48).setAlphabeticShortcut('e');
+		menu.add(Menu.NONE, INFO_ID, Menu.NONE, "About").setIcon(
+				R.drawable.dialog48).setAlphabeticShortcut('c');
 		return (super.onCreateOptionsMenu(menu));
 	}
-	
-//	public class MyOnItemSelectedListener implements OnItemSelectedListener {
-//
-//	    public void onItemSelected(AdapterView<?> parent,
-//	        View view, int pos, long id) {
-//	      Toast.makeText(parent.getContext(), "The category is " +
-//	          parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
-//	    }
-//
-//	    public void onNothingSelected(AdapterView<?> parent) {
-//	      // Do nothing.
-//	    }
-//	}
 }
