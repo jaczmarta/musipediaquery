@@ -79,27 +79,36 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 	private void paintBitmapImage() {
 		// TODO: use the given maximal screenwidth dynamically, height in 3:4
-		icon = Bitmap.createBitmap(300, 400, Bitmap.Config.ARGB_8888);
+		icon = Bitmap.createBitmap(480, 640, Bitmap.Config.ARGB_4444);
 		Canvas canvas = new Canvas(icon);
-		Paint photoPaint = new Paint();
-		photoPaint.setColor(0xFFEE0022);
-		photoPaint.setDither(true);
-		photoPaint.setFilterBitmap(true);
-		photoPaint.setTextSize(30);
-		Bitmap inlay;
-		if (this.elementArray[this.categoryPointer] > 0) {
-			inlay = BitmapFactory.decodeResource(getResources(),
-					R.drawable.logo_eule_buch);
-		} else {
-			inlay = BitmapFactory.decodeResource(getResources(),
-					R.drawable.logo_eule_wink);
-		}
+		Paint paintStyle = new Paint();
+		paintStyle.setColor(0xFFEE0022);
+		paintStyle.setDither(true);
+		paintStyle.setFilterBitmap(true);
+		paintStyle.setTextSize(30);
+		paintStyle.setTextAlign(Paint.Align.CENTER);
+//		Bitmap inlay;
+//		if (this.elementArray[this.categoryPointer] > 0) {
+//			inlay = BitmapFactory.decodeResource(getResources(),
+//					R.drawable.logo_eule_buch);
+//		} else {
+//			inlay = BitmapFactory.decodeResource(getResources(),
+//					R.drawable.logo_eule_wink);
+//		}
 
-		canvas.drawARGB(250, 120, 120, 120);
+//		canvas.drawBitmap(inlay, 30f, 40f, paintStyle);
+//		canvas = addCategoryInlays(canvas, paintStyle);
+		
+		canvas.drawARGB(250, 70, 70, 70); //fill background first
+		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.background01), 0f, 0f, paintStyle);
+//		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.nose01), 0f, 0f, paintStyle);
+		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.eyes01), 0f, 0f, paintStyle);
+		paintStyle.setColor(0xFFEE0022);
+		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.moustache01), 0f, 0f, paintStyle);
+		
 		if(this.editText.getText().length() > 0)
-			canvas.drawText("Name:" + this.editText.getText().toString(), 12f, 380f,
-				photoPaint);
-		canvas.drawBitmap(inlay, 30f, 40f, photoPaint);
+			canvas.drawText("Name:" + this.editText.getText().toString(), canvas.getWidth()/2, 380f,
+				paintStyle);
 
 		ImageView image = (ImageView) findViewById(R.id.test_image);
 		image.setImageBitmap(icon);
