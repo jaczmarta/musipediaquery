@@ -24,24 +24,23 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
-	protected static final int SAVE_ID = Menu.FIRST + 2; // Menu: edit
-	// preferences
-	protected static final int INFO_ID = Menu.FIRST + 4; // Menu: close program
-
-	protected static final int ELEMENTS_PER_CATEGORY = 10; // how many elements
-	// within a category
+	/**
+	 * // how many elements are within a category
+	 * FIXME: dynamic lists instead of fixed arrays
+	 */
+	protected static final int ELEMENTS_PER_CATEGORY = 10; 
 
 	private static final String GESTURE_UP = "Up";
 	private static final String GESTURE_DOWN = "Down";
@@ -85,21 +84,15 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	private void initValues() {
 		this.editText = (EditText) findViewById(R.id.EditText01);
 		this.editText.setText("");
-		this.editText.addTextChangedListener(new TextWatcher() {			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-			}	
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-			}	
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				paintBitmapImage();				
-			}
+		this.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		        if (!hasFocus) {
+		        	paintBitmapImage();
+		        }
+		    }
 		});
+
 		this.categoryArray = getResources().getStringArray(
 				R.array.category_array);
 		this.elementArray = new int[ELEMENTS_PER_CATEGORY];
@@ -134,9 +127,9 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 		if (this.editText.getText().length() > 0)
 			canvas.drawText(this.editText.getText().toString(),
-					canvas.getWidth() / 2, (canvas.getHeight() * 5) / 6,
+					canvas.getWidth() / 2, 40f/*(canvas.getHeight() * 5) / 6*/,
 					paintStyle);
-		// TODO: use the given maximal screenwidth dynamically, height in 3:4
+		//use the given maximal screenwidth dynamically, height in 3:4
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		float maxRelation = metrics.widthPixels / icon.getWidth();
@@ -439,9 +432,10 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 				if (this.categoryPointer < 0)
 					this.categoryPointer = this.categoryArray.length - 1;
 			}
-		} else if (gestureString.equals(GESTURE_REDOALL)) {
+		} else if (gestureString.equals(GESTURE_REDOALL) || gestureString.equals(GESTURE_XPOINT)) {
 			// reset category
 			this.categoryPointer = 0;
+			Arrays.fill(this.elementArray, 1);
 		} else if (gestureString.equals(GESTURE_RIGHT)
 				|| gestureString.equals(GESTURE_LEFT)) {
 			// increase element in this category
@@ -454,10 +448,8 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 				if (this.elementArray[this.categoryPointer] < 0)
 					this.elementArray[this.categoryPointer] = this.elementArray.length;
 			}
-		} else if (gestureString.equals(GESTURE_XPOINT)
-				|| gestureString.equals(GESTURE_BOXALL)) {
-			// delete this element, reset to 0;
-			this.elementArray[this.categoryPointer] = 0;
+		} else if (gestureString.equals(GESTURE_BOXALL)) {
+			savePhantomPic();			
 		}
 		paintBitmapImage();
 		Toast.makeText(
@@ -511,11 +503,11 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case SAVE_ID:
+		case R.id.menusave:
 			savePhantomPic();
 			return (true);
 
-		case INFO_ID:
+		case R.id.menuabout:
 			try {
 				AlertDialogBuilder.createAboutDialog(this).show();
 			} catch (NameNotFoundException e) {
@@ -529,10 +521,8 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, SAVE_ID, Menu.NONE, "Save").setIcon(
-				R.drawable.monitor).setAlphabeticShortcut('s');
-		menu.add(Menu.NONE, INFO_ID, Menu.NONE, "About").setIcon(
-				R.drawable.light).setAlphabeticShortcut('a');
-		return (super.onCreateOptionsMenu(menu));
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu, menu);
+	    return true;
 	}
 }
