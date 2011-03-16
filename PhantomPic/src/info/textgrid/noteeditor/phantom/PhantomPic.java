@@ -22,7 +22,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,8 +62,9 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	private int categoryPointer = 0;
 
 	private EditText editText;
-	
-	private String storagePath = Environment.getExternalStorageDirectory().toString();
+
+	private String storagePath = Environment.getExternalStorageDirectory()
+			.toString();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +85,21 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	private void initValues() {
 		this.editText = (EditText) findViewById(R.id.EditText01);
 		this.editText.setText("");
+		this.editText.addTextChangedListener(new TextWatcher() {			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}	
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}	
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				paintBitmapImage();				
+			}
+		});
 		this.categoryArray = getResources().getStringArray(
 				R.array.category_array);
 		this.elementArray = new int[ELEMENTS_PER_CATEGORY];
@@ -87,11 +107,10 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	}
 
 	private void paintBitmapImage() {
-		// TODO: use the given maximal screenwidth dynamically, height in 3:4
 		icon = Bitmap.createBitmap(480, 640, Bitmap.Config.ARGB_4444);
 		Canvas canvas = new Canvas(icon);
 		Paint paintStyle = new Paint();
-		paintStyle.setColor(0xFF44EE22);
+		paintStyle.setColor(0xBBFFFF00);
 		paintStyle.setDither(true);
 		paintStyle.setFilterBitmap(true);
 		paintStyle.setTextSize(30);
@@ -104,22 +123,29 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 				R.drawable.background), startX, startY, paintStyle);
 		canvas.drawBitmap(getElementInCategory0(), startX, startY, paintStyle);
 		// canvas.drawBitmap(getElementInCategory1(), startX, startY,
-		// paintStyle);
+		// paintStyle); //TODO
 		canvas.drawBitmap(getElementInCategory2(), startX, startY, paintStyle);
 		// canvas.drawBitmap(getElementInCategory3(), startX, startY,
-		// paintStyle);
+		// paintStyle); //TODO
 		canvas.drawBitmap(getElementInCategory4(), startX, startY, paintStyle);
 		canvas.drawBitmap(getElementInCategory5(), startX, startY, paintStyle);
 		canvas.drawBitmap(getElementInCategory6(), startX, startY, paintStyle);
 		canvas.drawBitmap(getElementInCategory7(), startX, startY, paintStyle);
 
 		if (this.editText.getText().length() > 0)
-			canvas.drawText("Name:" + this.editText.getText().toString(),
+			canvas.drawText(this.editText.getText().toString(),
 					canvas.getWidth() / 2, (canvas.getHeight() * 5) / 6,
 					paintStyle);
+		// TODO: use the given maximal screenwidth dynamically, height in 3:4
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		float maxRelation = metrics.widthPixels / icon.getWidth();
+		Bitmap scaledIcon = Bitmap.createScaledBitmap(icon,
+				(int) (maxRelation * icon.getWidth()),
+				(int) (maxRelation * icon.getHeight()), true);
 
 		ImageView image = (ImageView) findViewById(R.id.test_image);
-		image.setImageBitmap(icon);
+		image.setImageBitmap(scaledIcon);
 	}
 
 	/**
@@ -160,41 +186,41 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 					R.drawable.background);
 		}
 	}
-	
-//	private Bitmap getElementInCategory1() {
-//		switch (elementArray[1]) {
-//		case 1:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes01);
-//		case 2:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes02);
-//		case 3:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes03);
-//		case 4:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes04);
-//		case 5:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes04);
-//		case 6:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes06);
-//		case 7:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes07);
-//		case 8:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes08);
-//		case 9:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes09);
-//		default:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.background);
-//		}
-//	}
+
+	// private Bitmap getElementInCategory1() {
+	// switch (elementArray[1]) {
+	// case 1:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes01);
+	// case 2:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes02);
+	// case 3:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes03);
+	// case 4:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes04);
+	// case 5:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes04);
+	// case 6:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes06);
+	// case 7:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes07);
+	// case 8:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes08);
+	// case 9:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes09);
+	// default:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.background);
+	// }
+	// }
 
 	private Bitmap getElementInCategory2() {
 		switch (elementArray[2]) {
@@ -227,41 +253,41 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 					R.drawable.background);
 		}
 	}
-	
-//	private Bitmap getElementInCategory3() {
-//		switch (elementArray[3]) {
-//		case 1:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes01);
-//		case 2:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes02);
-//		case 3:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes03);
-//		case 4:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes04);
-//		case 5:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes04);
-//		case 6:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes06);
-//		case 7:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes07);
-//		case 8:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes08);
-//		case 9:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.eyes09);
-//		default:
-//			return BitmapFactory.decodeResource(getResources(),
-//					R.drawable.background);
-//		}
-//	}
+
+	// private Bitmap getElementInCategory3() {
+	// switch (elementArray[3]) {
+	// case 1:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes01);
+	// case 2:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes02);
+	// case 3:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes03);
+	// case 4:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes04);
+	// case 5:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes04);
+	// case 6:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes06);
+	// case 7:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes07);
+	// case 8:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes08);
+	// case 9:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.eyes09);
+	// default:
+	// return BitmapFactory.decodeResource(getResources(),
+	// R.drawable.background);
+	// }
+	// }
 
 	private Bitmap getElementInCategory4() {
 		switch (elementArray[4]) {
@@ -444,24 +470,28 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	}
 
 	private void savePhantomPic() {
+		String filename = this.editText.getText().toString() + "[at"
+				+ SystemClock.currentThreadTimeMillis() + "].png";
 		try {
 			OutputStream fOut = null;
-			File file = new File(storagePath, this.editText.getText().toString()
-					+ ".png");
+			File file = new File(storagePath, filename);
 			fOut = new FileOutputStream(file);
-	
 			this.icon.compress(Bitmap.CompressFormat.PNG, 85, fOut);
 			fOut.flush();
 			fOut.close();
-	
 			MediaStore.Images.Media.insertImage(getContentResolver(), file
 					.getAbsolutePath(), file.getName(), file.getName());
 		} catch (FileNotFoundException e) {
-			Toast.makeText(this, "Exception at save: File not found" + e.getMessage(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this,
+					"Exception at save: File not found" + e.getMessage(),
+					Toast.LENGTH_SHORT).show();
 		} catch (IOException e) {
-			Toast.makeText(this, "Exception at save: IO stream error" + e.getMessage(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this,
+					"Exception at save: IO stream error" + e.getMessage(),
+					Toast.LENGTH_SHORT).show();
 		}
-		Toast.makeText(this, "Saved to: " + storagePath + "/" + this.editText.getText().toString(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Saved to: " + storagePath + "/" + filename,
+				Toast.LENGTH_SHORT).show();
 	}
 
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
@@ -471,9 +501,6 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 			Prediction prediction = predictions.get(0);
 			// We want at least some confidence in the result
 			if (prediction.score > 1.0) {
-				// Show the spell
-				// Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT)
-				// .show();
 				handleGesture(prediction.name);
 			} else {
 				Toast.makeText(this, "???", Toast.LENGTH_SHORT).show();
@@ -484,7 +511,7 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case SAVE_ID:// TODO
+		case SAVE_ID:
 			savePhantomPic();
 			return (true);
 
@@ -502,10 +529,10 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, SAVE_ID, Menu.NONE, "Preferences").setIcon(
-				R.drawable.preferences48).setAlphabeticShortcut('e');
+		menu.add(Menu.NONE, SAVE_ID, Menu.NONE, "Save").setIcon(
+				R.drawable.monitor).setAlphabeticShortcut('s');
 		menu.add(Menu.NONE, INFO_ID, Menu.NONE, "About").setIcon(
-				R.drawable.dialog48).setAlphabeticShortcut('c');
+				R.drawable.light).setAlphabeticShortcut('a');
 		return (super.onCreateOptionsMenu(menu));
 	}
 }
