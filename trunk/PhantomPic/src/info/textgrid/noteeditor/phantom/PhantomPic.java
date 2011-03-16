@@ -1,6 +1,12 @@
 package info.textgrid.noteeditor.phantom;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.app.Activity;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -15,6 +21,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,11 +33,11 @@ import android.widget.Toast;
 public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 	protected static final int SAVE_ID = Menu.FIRST + 2; // Menu: edit
-															// preferences
+	// preferences
 	protected static final int INFO_ID = Menu.FIRST + 4; // Menu: close program
 
 	protected static final int ELEMENTS_PER_CATEGORY = 10; // how many elements
-															// within a category
+	// within a category
 
 	private static final String GESTURE_UP = "Up";
 	private static final String GESTURE_DOWN = "Down";
@@ -48,17 +56,17 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	private int[] elementArray;
 
 	private int categoryPointer = 0;
-	
+
 	private EditText editText;
+	
+	private String storagePath = Environment.getExternalStorageDirectory().toString();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
-		init();
+		initValues();
 		paintBitmapImage();
-
 		mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
 		if (!mLibrary.load()) {
 			finish();
@@ -69,12 +77,13 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 	}
 
-	private void init() {
+	private void initValues() {
 		this.editText = (EditText) findViewById(R.id.EditText01);
 		this.editText.setText("");
 		this.categoryArray = getResources().getStringArray(
 				R.array.category_array);
 		this.elementArray = new int[ELEMENTS_PER_CATEGORY];
+		Arrays.fill(this.elementArray, 1);
 	}
 
 	private void paintBitmapImage() {
@@ -82,36 +91,313 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 		icon = Bitmap.createBitmap(480, 640, Bitmap.Config.ARGB_4444);
 		Canvas canvas = new Canvas(icon);
 		Paint paintStyle = new Paint();
-		paintStyle.setColor(0xFFEE0022);
+		paintStyle.setColor(0xFF44EE22);
 		paintStyle.setDither(true);
 		paintStyle.setFilterBitmap(true);
 		paintStyle.setTextSize(30);
 		paintStyle.setTextAlign(Paint.Align.CENTER);
-//		Bitmap inlay;
-//		if (this.elementArray[this.categoryPointer] > 0) {
-//			inlay = BitmapFactory.decodeResource(getResources(),
-//					R.drawable.logo_eule_buch);
-//		} else {
-//			inlay = BitmapFactory.decodeResource(getResources(),
-//					R.drawable.logo_eule_wink);
-//		}
 
-//		canvas.drawBitmap(inlay, 30f, 40f, paintStyle);
-//		canvas = addCategoryInlays(canvas, paintStyle);
-		
-		canvas.drawARGB(250, 70, 70, 70); //fill background first
-		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.background01), 0f, 0f, paintStyle);
-//		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.nose01), 0f, 0f, paintStyle);
-		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.eyes01), 0f, 0f, paintStyle);
-		paintStyle.setColor(0xFFEE0022);
-		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.moustache01), 0f, 0f, paintStyle);
-		
-		if(this.editText.getText().length() > 0)
-			canvas.drawText("Name:" + this.editText.getText().toString(), canvas.getWidth()/2, 380f,
-				paintStyle);
+		float startX = -50f;
+		float startY = -30f;
+		canvas.drawARGB(250, 170, 170, 170); // fill background first
+		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
+				R.drawable.background), startX, startY, paintStyle);
+		canvas.drawBitmap(getElementInCategory0(), startX, startY, paintStyle);
+		// canvas.drawBitmap(getElementInCategory1(), startX, startY,
+		// paintStyle);
+		canvas.drawBitmap(getElementInCategory2(), startX, startY, paintStyle);
+		// canvas.drawBitmap(getElementInCategory3(), startX, startY,
+		// paintStyle);
+		canvas.drawBitmap(getElementInCategory4(), startX, startY, paintStyle);
+		canvas.drawBitmap(getElementInCategory5(), startX, startY, paintStyle);
+		canvas.drawBitmap(getElementInCategory6(), startX, startY, paintStyle);
+		canvas.drawBitmap(getElementInCategory7(), startX, startY, paintStyle);
+
+		if (this.editText.getText().length() > 0)
+			canvas.drawText("Name:" + this.editText.getText().toString(),
+					canvas.getWidth() / 2, (canvas.getHeight() * 5) / 6,
+					paintStyle);
 
 		ImageView image = (ImageView) findViewById(R.id.test_image);
 		image.setImageBitmap(icon);
+	}
+
+	/**
+	 * <item>Hair</item>0 <item>Eyebrows</item>1 <item>Ears</item>2
+	 * <item>Glasses</item>3 <item>Eyes</item>4 <item>Nose</item>5
+	 * <item>Moustache</item>6 <item>Mouth</item>7 <item>Chin</item>8 hair
+	 * 
+	 * @return
+	 */
+	private Bitmap getElementInCategory0() {
+		switch (elementArray[0]) {
+		case 1:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.hair01);
+		case 2:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.hair02);
+		case 3:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.hair03);
+		case 4:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.hair04);
+		case 5:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.hair05);
+		case 6:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.hair06);
+		case 7:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.hair07);
+		case 8:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.hair08);
+		default:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.background);
+		}
+	}
+	
+//	private Bitmap getElementInCategory1() {
+//		switch (elementArray[1]) {
+//		case 1:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes01);
+//		case 2:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes02);
+//		case 3:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes03);
+//		case 4:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes04);
+//		case 5:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes04);
+//		case 6:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes06);
+//		case 7:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes07);
+//		case 8:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes08);
+//		case 9:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes09);
+//		default:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.background);
+//		}
+//	}
+
+	private Bitmap getElementInCategory2() {
+		switch (elementArray[2]) {
+		case 1:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.ears01);
+		case 2:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.ears02);
+		case 3:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.ears03);
+		case 4:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.ears04);
+		case 5:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.ears05);
+			// case 6:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.hair06);
+			// case 7:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.hair07);
+			// case 8:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.hair08);
+		default:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.background);
+		}
+	}
+	
+//	private Bitmap getElementInCategory3() {
+//		switch (elementArray[3]) {
+//		case 1:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes01);
+//		case 2:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes02);
+//		case 3:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes03);
+//		case 4:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes04);
+//		case 5:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes04);
+//		case 6:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes06);
+//		case 7:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes07);
+//		case 8:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes08);
+//		case 9:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.eyes09);
+//		default:
+//			return BitmapFactory.decodeResource(getResources(),
+//					R.drawable.background);
+//		}
+//	}
+
+	private Bitmap getElementInCategory4() {
+		switch (elementArray[4]) {
+		case 1:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes01);
+		case 2:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes02);
+		case 3:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes03);
+		case 4:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes04);
+		case 5:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes04);
+		case 6:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes06);
+		case 7:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes07);
+		case 8:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes08);
+		case 9:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.eyes09);
+		default:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.background);
+		}
+	}
+
+	private Bitmap getElementInCategory5() {
+		switch (elementArray[5]) {
+		case 1:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.nose01);
+		case 2:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.nose02);
+		case 3:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.nose03);
+			// case 4:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.hair04);
+			// case 5:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.hair05);
+			// case 6:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.hair06);
+			// case 7:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.hair07);
+			// case 8:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.hair08);
+		default:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.background);
+		}
+	}
+
+	private Bitmap getElementInCategory6() {
+		switch (elementArray[6]) {
+		case 1:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.moustache01);
+		case 2:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.moustache02);
+		case 3:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.moustache03);
+		case 4:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.moustache04);
+		case 5:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.moustache05);
+			// case 6:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.eyes06);
+			// case 7:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.eyes07);
+			// case 8:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.eyes08);
+			// case 9:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.eyes09);
+		default:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.background);
+		}
+	}
+
+	private Bitmap getElementInCategory7() {
+		switch (elementArray[7]) {
+		case 1:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.mouth01);
+		case 2:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.mouth02);
+		case 3:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.mouth03);
+		case 4:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.mouth04);
+		case 5:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.mouth05);
+		case 6:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.mouth06);
+		case 7:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.mouth07);
+			// case 8:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.eyes08);
+			// case 9:
+			// return BitmapFactory.decodeResource(getResources(),
+			// R.drawable.eyes09);
+		default:
+			return BitmapFactory.decodeResource(getResources(),
+					R.drawable.background);
+		}
 	}
 
 	private void handleGesture(String gestureString) {
@@ -120,11 +406,11 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 			// switch category
 			if (gestureString.equals(GESTURE_DOWN)) {
 				this.categoryPointer++;
-				if(this.categoryPointer > this.categoryArray.length - 1)
+				if (this.categoryPointer > this.categoryArray.length - 1)
 					this.categoryPointer = 0;
 			} else {
 				this.categoryPointer--;
-				if(this.categoryPointer < 0)
+				if (this.categoryPointer < 0)
 					this.categoryPointer = this.categoryArray.length - 1;
 			}
 		} else if (gestureString.equals(GESTURE_REDOALL)) {
@@ -135,20 +421,47 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 			// increase element in this category
 			if (gestureString.equals(GESTURE_RIGHT)) {
 				this.elementArray[this.categoryPointer]++;
-				if(this.elementArray[this.categoryPointer] > this.elementArray.length)
-						this.elementArray[this.categoryPointer] = 0;
+				if (this.elementArray[this.categoryPointer] > this.elementArray.length)
+					this.elementArray[this.categoryPointer] = 0;
 			} else {
 				this.elementArray[this.categoryPointer]--;
-				if(this.elementArray[this.categoryPointer] < 0)
+				if (this.elementArray[this.categoryPointer] < 0)
 					this.elementArray[this.categoryPointer] = this.elementArray.length;
 			}
-		} else if (gestureString.equals(GESTURE_XPOINT) || gestureString.equals(GESTURE_BOXALL)) {
+		} else if (gestureString.equals(GESTURE_XPOINT)
+				|| gestureString.equals(GESTURE_BOXALL)) {
 			// delete this element, reset to 0;
 			this.elementArray[this.categoryPointer] = 0;
 		}
 		paintBitmapImage();
-		Toast.makeText(this, "Gesture: " + gestureString + "\nCategory: " + this.categoryArray[this.categoryPointer] + "\nElement:" + this.elementArray[this.categoryPointer], Toast.LENGTH_SHORT)
-		.show();
+		Toast.makeText(
+				this,
+				"Gesture: " + gestureString + "\nCategory: "
+						+ this.categoryArray[this.categoryPointer]
+						+ "\nElement:"
+						+ this.elementArray[this.categoryPointer],
+				Toast.LENGTH_SHORT).show();
+	}
+
+	private void savePhantomPic() {
+		try {
+			OutputStream fOut = null;
+			File file = new File(storagePath, this.editText.getText().toString()
+					+ ".png");
+			fOut = new FileOutputStream(file);
+	
+			this.icon.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+			fOut.flush();
+			fOut.close();
+	
+			MediaStore.Images.Media.insertImage(getContentResolver(), file
+					.getAbsolutePath(), file.getName(), file.getName());
+		} catch (FileNotFoundException e) {
+			Toast.makeText(this, "Exception at save: File not found" + e.getMessage(), Toast.LENGTH_SHORT).show();
+		} catch (IOException e) {
+			Toast.makeText(this, "Exception at save: IO stream error" + e.getMessage(), Toast.LENGTH_SHORT).show();
+		}
+		Toast.makeText(this, "Saved to: " + storagePath + "/" + this.editText.getText().toString(), Toast.LENGTH_SHORT).show();
 	}
 
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
@@ -159,8 +472,8 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 			// We want at least some confidence in the result
 			if (prediction.score > 1.0) {
 				// Show the spell
-//				Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT)
-//						.show();
+				// Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT)
+				// .show();
 				handleGesture(prediction.name);
 			} else {
 				Toast.makeText(this, "???", Toast.LENGTH_SHORT).show();
@@ -172,8 +485,7 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case SAVE_ID:// TODO
-			Toast.makeText(this, "TODO: saving to file", Toast.LENGTH_LONG)
-					.show();
+			savePhantomPic();
 			return (true);
 
 		case INFO_ID:

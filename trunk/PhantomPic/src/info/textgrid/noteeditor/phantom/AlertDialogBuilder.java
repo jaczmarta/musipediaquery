@@ -31,7 +31,7 @@ public class AlertDialogBuilder {
 		// Now linkify the text
 		Linkify.addLinks(message, Linkify.ALL);
 
-		return new AlertDialog.Builder(context).setTitle(aboutTitle).setCancelable(true).setIcon(R.drawable.logo_eule_128x128).setPositiveButton(
+		return new AlertDialog.Builder(context).setTitle(aboutTitle).setCancelable(true).setIcon(R.drawable.happy72).setPositiveButton(
 			 context.getString(android.R.string.ok), null).setView(message).create();
 	}
 }
