@@ -2,16 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:padding="5px"
     >
 			
-	  <EditText android:text="@+id/EditText01" android:id="@+id/EditText01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:clickable="true"></EditText>
-    <!--
-	<Spinner android:id="@+id/Spinner01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/EditText01" android:layout_toRightOf="@id/test_image"/>
-	<SeekBar android:id="@+id/SeekBar01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/Spinner01" android:layout_toRightOf="@id/test_image" android:max="5"/>
-	<Button android:text="@+id/Button01" android:id="@+id/Button01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/SeekBar01" android:layout_toRightOf="@id/test_image"/>
-	-->
+  <EditText android:text="@+id/EditText01" android:id="@+id/EditText01" android:layout_width="fill_parent" android:layout_height="wrap_content" android:clickable="true"></EditText>
 	
 	<android.gesture.GestureOverlayView
 		android:id="@+id/gestures"
@@ -20,7 +15,10 @@
     	android:layout_weight="1.0" 
     	android:layout_below="@id/EditText01"
     	>
-    <ImageView android:id="@+id/test_image"
-			android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="300px"/>
-			</android.gesture.GestureOverlayView>
+    	<ImageView android:id="@+id/ImageView01"
+			android:layout_width="wrap_content" android:layout_height="wrap_content" android:minWidth="200px" android:minHeight="200px" android:src="@drawable/background"/>
+	</android.gesture.GestureOverlayView>
+			
+	<!-- <Spinner android:id="@+id/Spinner01" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+	<Spinner android:id="@+id/Spinner02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toRightOf="@id/Spinner01"/>  -->
 </RelativeLayout>

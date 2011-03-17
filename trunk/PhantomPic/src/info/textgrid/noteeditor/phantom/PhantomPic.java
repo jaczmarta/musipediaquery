@@ -24,12 +24,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -83,15 +81,30 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 	private void initValues() {
 		this.editText = (EditText) findViewById(R.id.EditText01);
-		this.editText.setText("");
-		this.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-		    @Override
-		    public void onFocusChange(View v, boolean hasFocus) {
-		        if (!hasFocus) {
-		        	paintBitmapImage();
-		        }
-		    }
-		});
+		this.editText.setText("Phantom");
+//		this.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//		    @Override
+//		    public void onFocusChange(View v, boolean hasFocus) {
+//		        if (!hasFocus) {
+//		        	paintBitmapImage();
+//		        }
+//		    }
+//		});
+//		this.editText.addTextChangedListener(new TextWatcher() {			
+//			@Override
+//			public void onTextChanged(CharSequence s, int start, int before, int count) {
+//			}	
+//			
+//			@Override
+//			public void beforeTextChanged(CharSequence s, int start, int count,
+//					int after) {
+//			}	
+//			
+//			@Override
+//			public void afterTextChanged(Editable s) {
+//				paintBitmapImage();				
+//			}
+//		});
 
 		this.categoryArray = getResources().getStringArray(
 				R.array.category_array);
@@ -100,10 +113,10 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 	}
 
 	private void paintBitmapImage() {
-		icon = Bitmap.createBitmap(480, 640, Bitmap.Config.ARGB_4444);
+		icon = Bitmap.createBitmap(480, 600, Bitmap.Config.ARGB_4444);
 		Canvas canvas = new Canvas(icon);
 		Paint paintStyle = new Paint();
-		paintStyle.setColor(0xBBFFFF00);
+		paintStyle.setColor(0xBB000000);
 		paintStyle.setDither(true);
 		paintStyle.setFilterBitmap(true);
 		paintStyle.setTextSize(30);
@@ -111,7 +124,7 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 
 		float startX = -50f;
 		float startY = -30f;
-		canvas.drawARGB(250, 170, 170, 170); // fill background first
+		canvas.drawARGB(250, 210, 210, 210); // fill background first
 		canvas.drawBitmap(BitmapFactory.decodeResource(getResources(),
 				R.drawable.background), startX, startY, paintStyle);
 		canvas.drawBitmap(getElementInCategory0(), startX, startY, paintStyle);
@@ -124,21 +137,28 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 		canvas.drawBitmap(getElementInCategory5(), startX, startY, paintStyle);
 		canvas.drawBitmap(getElementInCategory6(), startX, startY, paintStyle);
 		canvas.drawBitmap(getElementInCategory7(), startX, startY, paintStyle);
+//		canvas.drawBitmap(getElementInCategory8(), startX, startY, paintStyle); TODO
 
-		if (this.editText.getText().length() > 0)
+		if (this.editText.getText().length() > 0){
+			canvas.drawRect(canvas.getWidth() / 3 - 2, (canvas.getHeight() * 9) / 10 - 2, canvas.getWidth() / 3 * 2 + 2, canvas.getHeight() + 2, paintStyle);
+			paintStyle.setColor(0xFFFFFFFF);
+			canvas.drawRect(canvas.getWidth() / 3 + 2, ((canvas.getHeight() * 9) / 10) + 2, canvas.getWidth() / 3 * 2 - 2, canvas.getHeight() - 2, paintStyle);
+			paintStyle.setColor(0xBB333333);
 			canvas.drawText(this.editText.getText().toString(),
-					canvas.getWidth() / 2, 40f/*(canvas.getHeight() * 5) / 6*/,
+					canvas.getWidth() / 2, (canvas.getHeight() * 19) / 20,
 					paintStyle);
-		//use the given maximal screenwidth dynamically, height in 3:4
-		DisplayMetrics metrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		float maxRelation = metrics.widthPixels / icon.getWidth();
-		Bitmap scaledIcon = Bitmap.createScaledBitmap(icon,
-				(int) (maxRelation * icon.getWidth()),
-				(int) (maxRelation * icon.getHeight()), true);
+			
+			}
+		//TODO use the given maximal screenwidth dynamically, height in 3:4
+//		DisplayMetrics metrics = new DisplayMetrics();
+//		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//		float maxRelation = metrics.widthPixels / icon.getWidth();
+//		Bitmap scaledIcon = Bitmap.createScaledBitmap(icon,
+//				(int) (maxRelation * icon.getWidth()),
+//				(int) (maxRelation * icon.getHeight()), true);
 
-		ImageView image = (ImageView) findViewById(R.id.test_image);
-		image.setImageBitmap(scaledIcon);
+		ImageView image = (ImageView) findViewById(R.id.ImageView01);
+		image.setImageBitmap(icon);
 	}
 
 	/**
@@ -433,9 +453,8 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 					this.categoryPointer = this.categoryArray.length - 1;
 			}
 		} else if (gestureString.equals(GESTURE_REDOALL) || gestureString.equals(GESTURE_XPOINT)) {
-			// reset category
-			this.categoryPointer = 0;
-			Arrays.fill(this.elementArray, 1);
+			// reset all
+			initValues();
 		} else if (gestureString.equals(GESTURE_RIGHT)
 				|| gestureString.equals(GESTURE_LEFT)) {
 			// increase element in this category
@@ -495,7 +514,7 @@ public class PhantomPic extends Activity implements OnGesturePerformedListener {
 			if (prediction.score > 1.0) {
 				handleGesture(prediction.name);
 			} else {
-				Toast.makeText(this, "???", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "unknown gesture", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
