@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
-      <item android:title="Save" android:icon="@drawable/monitor" android:id="@+id/menusave" android:visible="true"/>
+      <item android:title="Save" android:id="@+id/menusave" android:visible="true"/><!-- android:icon="@drawable/monitor"  -->
     <item android:title="About"
         android:icon="@drawable/light" android:id="@+id/menuabout" android:visible="true"/>
 </menu>
