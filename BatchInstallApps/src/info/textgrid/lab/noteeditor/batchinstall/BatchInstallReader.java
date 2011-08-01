@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.xmlpull.v1.XmlSerializer;
@@ -48,10 +49,11 @@ public class BatchInstallReader extends Activity {
 			packageStringList.add(packageName);
 			appLabelStringList.add((String) pm.getApplicationLabel(appList.get(i)));
 		}
+		Collections.sort(appLabelStringList);
 
 		final ListView displayList = (ListView) findViewById(R.id.list);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				R.layout.resultlist_entry, packageStringList);
+				R.layout.resultlist_entry, appLabelStringList);
 		displayList.setAdapter(adapter);
 		displayList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -79,14 +81,14 @@ public class BatchInstallReader extends Activity {
 		});
 		
 		TextView textView = (TextView) findViewById(R.id.TextView01);
-		textView.setText("List of all " +  appList.size() + " installed Apps");
+		textView.setText("Installed Apps(" +  appList.size() +")");
 
 	}
 
 	private boolean writeListToXml(List<String> packageStringList, List<String> appLabelStringList) {
 		boolean result = false;
 		File newxmlfile = new File(Environment.getExternalStorageDirectory()
-				+ "/installedAppsList.xml");
+				+ "/installedAppsList.xhtml");
 		try {
 			newxmlfile.createNewFile();
 			// we have to bind the new file with a FileOutputStream
@@ -104,17 +106,24 @@ public class BatchInstallReader extends Activity {
 					"http://xmlpull.org/v1/doc/features.html#indent-output",
 					true);
 			// start a tag called "root"
-			serializer.startTag(null, "rootOfInstalledApps");
+			serializer.startTag(null, "html"); //xmlns="http://www.w3.org/1999/xhtml"
+			serializer.attribute(null, "xmlns", "http://www.w3.org/1999/xhtml");
+			serializer.startTag(null, "body");
 			for (int i = 0; i < packageStringList.size(); i++) {
-				serializer.startTag(null, "App");
+				serializer.comment("App #" + i);
+				serializer.startTag(null, "div");				
 				serializer.attribute(null, "applicationLabel", appLabelStringList.get(i));
-				serializer.attribute(null, "packageName", packageStringList.get(i));
-				String linkTest = "https://market.android.com/search?q=pname:"
-						+ packageStringList.get(i);
-				serializer.text(linkTest);
-				serializer.endTag(null, "App");
+				serializer.startTag(null, "a");
+				serializer.attribute(null, "href", "https://market.android.com/search?q=pname:"
+						+ packageStringList.get(i));
+				serializer.text(packageStringList.get(i));
+				serializer.endTag(null, "a");
+				serializer.endTag(null, "div");
+				serializer.startTag(null, "br");
+				serializer.endTag(null, "br");
 			}
-			serializer.endTag(null, "rootOfInstalledApps");
+			serializer.endTag(null, "body");
+			serializer.endTag(null, "html");
 			serializer.endDocument();
 			// write xml data into the FileOutputStream
 			serializer.flush();
