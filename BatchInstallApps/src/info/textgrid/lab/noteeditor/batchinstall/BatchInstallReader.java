@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.xmlpull.v1.XmlSerializer;
@@ -27,12 +26,18 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class BatchInstallReader extends Activity {
+	
+	final static String XML_WRITING_SUCCESSFUL = "XML writing successfully: \nCreated file SDcard/installedAppsList.xml";
+	final static String XML_WRITING_FAILED = "XML writing failed, \nsee log";
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		final AlertDialog.Builder adb = new AlertDialog.Builder(
+				BatchInstallReader.this);
 		final PackageManager pm = getPackageManager();
 		final List<ApplicationInfo> appList = pm.getInstalledApplications(0);
 		final ArrayList<String> packageStringList = new ArrayList<String>();
@@ -52,8 +57,6 @@ public class BatchInstallReader extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-				AlertDialog.Builder adb = new AlertDialog.Builder(
-						BatchInstallReader.this);
 				adb.setTitle((String) pm.getApplicationLabel(appList.get(position)));
 				adb.setMessage("Package: \n"
 						+ packageStringList.get(position));
@@ -64,11 +67,14 @@ public class BatchInstallReader extends Activity {
 		});
 
 		Button writeButton = (Button) findViewById(R.id.Button01);
-		writeButton.setText("writeXmlList");
+		writeButton.setText("Write to XML");
 		writeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				writeListToXml(packageStringList, appLabelStringList);
-				((Button) findViewById(R.id.Button01)).setText("writeXmlList…done");
+				boolean result = writeListToXml(packageStringList, appLabelStringList);
+				adb.setTitle("XML Writer Status");
+				adb.setMessage(result?XML_WRITING_SUCCESSFUL:XML_WRITING_FAILED);
+				adb.setPositiveButton("Noted.", null);
+				adb.show();
 			}
 		});
 		
@@ -77,11 +83,10 @@ public class BatchInstallReader extends Activity {
 
 	}
 
-	private void writeListToXml(List<String> packageStringList, List<String> appLabelStringList) {
-		Date current = new Date();
+	private boolean writeListToXml(List<String> packageStringList, List<String> appLabelStringList) {
+		boolean result = false;
 		File newxmlfile = new File(Environment.getExternalStorageDirectory()
-				+ "/installedAppsList.xml" + current.getDay() + ""
-				+ current.getMonth() + "" + current.getYear() + ".xml");
+				+ "/installedAppsList.xml");
 		try {
 			newxmlfile.createNewFile();
 			// we have to bind the new file with a FileOutputStream
@@ -101,14 +106,13 @@ public class BatchInstallReader extends Activity {
 			// start a tag called "root"
 			serializer.startTag(null, "rootOfInstalledApps");
 			for (int i = 0; i < packageStringList.size(); i++) {
-				serializer.startTag(null, "App " + i);
+				serializer.startTag(null, "App");
 				serializer.attribute(null, "applicationLabel", appLabelStringList.get(i));
 				serializer.attribute(null, "packageName", packageStringList.get(i));
 				String linkTest = "https://market.android.com/search?q=pname:"
 						+ packageStringList.get(i);
 				serializer.text(linkTest);
-
-				serializer.endTag(null, "App" + i);
+				serializer.endTag(null, "App");
 			}
 			serializer.endTag(null, "rootOfInstalledApps");
 			serializer.endDocument();
@@ -116,12 +120,18 @@ public class BatchInstallReader extends Activity {
 			serializer.flush();
 			// finally we close the file stream
 			fileos.close();
+			result = true;
 		} catch (FileNotFoundException e) {
 			Log.e("FileNotFoundException", "can't create FileOutputStream");
+			return result;
 		} catch (IOException e) {
 			Log.e("IOException", "exception in createNewFile() method");
+			return result;
 		} catch (Exception e) {
 			Log.e("Exception", "error occurred while creating xml file");
+			return result;
 		}
+		return result;
+		
 	}
 }
