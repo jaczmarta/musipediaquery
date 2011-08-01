@@ -36,10 +36,12 @@ public class BatchInstallReader extends Activity {
 		final PackageManager pm = getPackageManager();
 		final List<ApplicationInfo> appList = pm.getInstalledApplications(0);
 		final ArrayList<String> packageStringList = new ArrayList<String>();
+		final ArrayList<String> appLabelStringList = new ArrayList<String>();
 		for (int i = 0; i < appList.size(); i++) {
 			ApplicationInfo appInfo = appList.get(i);
 			String packageName = appInfo.packageName;
 			packageStringList.add(packageName);
+			appLabelStringList.add((String) pm.getApplicationLabel(appList.get(i)));
 		}
 
 		final ListView displayList = (ListView) findViewById(R.id.list);
@@ -52,8 +54,8 @@ public class BatchInstallReader extends Activity {
 					long id) {
 				AlertDialog.Builder adb = new AlertDialog.Builder(
 						BatchInstallReader.this);
-				adb.setTitle("Entry");
-				adb.setMessage("Package Name="
+				adb.setTitle((String) pm.getApplicationLabel(appList.get(position)));
+				adb.setMessage("Package: \n"
 						+ packageStringList.get(position));
 				adb.setPositiveButton("Ok", null);
 				adb.setIcon(pm.getApplicationIcon(appList.get(position)));
@@ -61,11 +63,12 @@ public class BatchInstallReader extends Activity {
 			}
 		});
 
-		Button upButton = (Button) findViewById(R.id.Button01);
-		upButton.setText("writeXmlList");
-		upButton.setOnClickListener(new View.OnClickListener() {
+		Button writeButton = (Button) findViewById(R.id.Button01);
+		writeButton.setText("writeXmlList");
+		writeButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				writeListToXml(packageStringList);
+				writeListToXml(packageStringList, appLabelStringList);
+				((Button) findViewById(R.id.Button01)).setText("writeXmlListÉdone");
 			}
 		});
 		
@@ -74,7 +77,7 @@ public class BatchInstallReader extends Activity {
 
 	}
 
-	private void writeListToXml(List<String> list) {
+	private void writeListToXml(List<String> packageStringList, List<String> appLabelStringList) {
 		Date current = new Date();
 		File newxmlfile = new File(Environment.getExternalStorageDirectory()
 				+ "/installedAppsList.xml" + current.getDay() + ""
@@ -97,11 +100,12 @@ public class BatchInstallReader extends Activity {
 					true);
 			// start a tag called "root"
 			serializer.startTag(null, "rootOfInstalledApps");
-			for (int i = 0; i < list.size(); i++) {
-				serializer.startTag(null, "App" + i);
-				serializer.attribute(null, "packageName", list.get(i));
+			for (int i = 0; i < packageStringList.size(); i++) {
+				serializer.startTag(null, "App " + i);
+				serializer.attribute(null, "applicationLabel", appLabelStringList.get(i));
+				serializer.attribute(null, "packageName", packageStringList.get(i));
 				String linkTest = "https://market.android.com/search?q=pname:"
-						+ list.get(i);
+						+ packageStringList.get(i);
 				serializer.text(linkTest);
 
 				serializer.endTag(null, "App" + i);
