@@ -41,6 +41,7 @@ public class BatchInstallReader extends Activity {
 				BatchInstallReader.this);
 		final PackageManager pm = getPackageManager();
 		final List<ApplicationInfo> appList = pm.getInstalledApplications(0);
+		Collections.sort(appList, new ApplicationInfoComparator());
 		final ArrayList<String> packageStringList = new ArrayList<String>();
 		final ArrayList<String> appLabelStringList = new ArrayList<String>();
 		for (int i = 0; i < appList.size(); i++) {
@@ -49,7 +50,6 @@ public class BatchInstallReader extends Activity {
 			packageStringList.add(packageName);
 			appLabelStringList.add((String) pm.getApplicationLabel(appList.get(i)));
 		}
-		Collections.sort(appLabelStringList);
 
 		final ListView displayList = (ListView) findViewById(R.id.list);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -76,6 +76,7 @@ public class BatchInstallReader extends Activity {
 				adb.setTitle("XML Writer Status");
 				adb.setMessage(result?XML_WRITING_SUCCESSFUL:XML_WRITING_FAILED);
 				adb.setPositiveButton("Noted.", null);
+				adb.setIcon(R.drawable.icon);
 				adb.show();
 			}
 		});
