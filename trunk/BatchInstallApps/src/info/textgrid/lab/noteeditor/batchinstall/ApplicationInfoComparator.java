@@ -5,7 +5,7 @@ import java.util.Comparator;
 import android.content.pm.ApplicationInfo;
 
 /**
- * Compares two AppInfos for sortability
+ * Compares two AppInfos for sortability by their packagename alphabet position
  * @author julian
  *
  */

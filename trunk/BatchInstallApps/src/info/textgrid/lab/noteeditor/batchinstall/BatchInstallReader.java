@@ -20,7 +20,6 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -52,8 +51,8 @@ public class BatchInstallReader extends Activity {
 		}
 
 		final ListView displayList = (ListView) findViewById(R.id.list);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				R.layout.resultlist_entry, appLabelStringList);
+		IconStringArrayAdapter adapter = new IconStringArrayAdapter(this,
+		R.layout.resultlist_entry, appList);		
 		displayList.setAdapter(adapter);
 		displayList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
