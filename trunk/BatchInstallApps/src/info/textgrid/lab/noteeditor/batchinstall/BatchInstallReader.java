@@ -40,7 +40,7 @@ public class BatchInstallReader extends Activity {
 				BatchInstallReader.this);
 		final PackageManager pm = getPackageManager();
 		final List<ApplicationInfo> appList = pm.getInstalledApplications(0);
-		Collections.sort(appList, new ApplicationInfoComparator());
+		Collections.sort(appList, new ApplicationInfoComparator(pm));
 		final ArrayList<String> packageStringList = new ArrayList<String>();
 		final ArrayList<String> appLabelStringList = new ArrayList<String>();
 		for (int i = 0; i < appList.size(); i++) {
